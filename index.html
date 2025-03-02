@@ -86,15 +86,6 @@
         .search-button:hover {
             background-color: #7B68EE;
         }
-        .search-box {
-            margin-top: 20px;
-            display: none; /* ซ่อนช่องค้นหาเริ่มต้น */
-        }
-        .search-box input {
-            padding: 10px;
-            width: 80%;
-            margin-bottom: 10px;
-        }
         /* Popup Styles */
         .popup {
             display: none;
@@ -163,6 +154,19 @@
         .person .phone a:hover {
             text-decoration: underline;
         }
+        .search-popup-content {
+            text-align: left;
+        }
+        .search-popup-content input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .search-popup-content select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -190,37 +194,48 @@
             🎓 มัธยม
         </a>
         <!-- ย้ายปุ่มค้นหาไปไว้ใน navbar -->
-        <button class="search-button" onclick="toggleSearchBox()">ค้นหา</button>
+        <button class="search-button" onclick="openSearchPopup()">ค้นหา</button>
     </nav>
 
     <div class="school-background">
         <h2>ยินดีต้อนรับสู่ระบบติดต่อใครเอ่ย</h2>
     </div>
 
-    <div class="container">
-        <div class="search-box" id="searchBox">
-            <input type="text" id="search-input" placeholder="ค้นหาครูหรือบุคลากร">
-            <button class="search-button" onclick="handleSearch()">ค้นหา</button>
-        </div>
-    </div>
-
     <footer>
-        <p>&copy; 2025 ติดต่อใครเอ่ย. สงวนลิขสิทธิ์.</p>
+        <p>&copy; 2023 ติดต่อใครเอ่ย. สงวนลิขสิทธิ์.</p>
     </footer>
 
-    <!-- Popup -->
+    <!-- Popup สำหรับค้นหา -->
     <div class="overlay" id="overlay"></div>
-    <div class="popup" id="popup">
-        <h3 id="popup-title">ฝ่ายบริหาร</h3>
-        <div id="popup-content"></div>
-        <button onclick="closePopup()">ปิด</button>
+    <div class="popup" id="search-popup">
+        <h3 id="search-popup-title">ค้นหาครูหรือบุคลากร</h3>
+        <div class="search-popup-content">
+            <input type="text" id="search-name" placeholder="ค้นหาชื่อ">
+            <select id="search-department">
+                <option value="">เลือกฝ่าย</option>
+                <option value="admin">ฝ่ายบริหาร</option>
+                <option value="staff">บุคลากร</option>
+                <option value="kindergarten">อนุบาล</option>
+                <option value="primary">ประถม</option>
+                <option value="secondary">มัธยม</option>
+            </select>
+            <button class="search-button" onclick="handleSearch()">ค้นหา</button>
+        </div>
+        <button onclick="closeSearchPopup()">ปิด</button>
     </div>
 
     <!-- Popup สำหรับแสดงผลการค้นหา -->
-    <div class="popup" id="search-popup">
-        <h3 id="search-popup-title">ผลการค้นหา</h3>
-        <p id="search-popup-content"></p>
-        <button onclick="closeSearchPopup()">ปิด</button>
+    <div class="popup" id="result-popup">
+        <h3 id="result-popup-title">ผลการค้นหา</h3>
+        <div id="result-popup-content"></div>
+        <button onclick="closeResultPopup()">ปิด</button>
+    </div>
+
+    <!-- Popup สำหรับแสดงข้อมูลแต่ละเมนู -->
+    <div class="popup" id="menu-popup">
+        <h3 id="menu-popup-title"></h3>
+        <div id="menu-popup-content"></div>
+        <button onclick="closeMenuPopup()">ปิด</button>
     </div>
 
     <script>
@@ -303,23 +318,91 @@
             }
         };
 
-        // ฟังก์ชันเปิด Popup
-        function openPopup(type) {
-            const popup = document.getElementById('popup');
+        // ฟังก์ชันเปิด Popup ค้นหา
+        function openSearchPopup() {
+            const searchPopup = document.getElementById('search-popup');
             const overlay = document.getElementById('overlay');
-            const title = document.getElementById('popup-title');
-            const content = document.getElementById('popup-content');
 
-            title.innerHTML = data[type].title;
-            content.innerHTML = generatePeopleList(data[type].people);
-
-            popup.style.display = 'block';
+            searchPopup.style.display = 'block';
             overlay.style.display = 'block';
         }
 
-        // ฟังก์ชันสร้างรายชื่อบุคคล
-        function generatePeopleList(people) {
-            return people.map(person => `
+        // ฟังก์ชันปิด Popup ค้นหา
+        function closeSearchPopup() {
+            const searchPopup = document.getElementById('search-popup');
+            const overlay = document.getElementById('overlay');
+
+            searchPopup.style.display = 'none';
+            overlay.style.display = 'none';
+        }
+
+        // ฟังก์ชันค้นหา
+        function handleSearch() {
+            const searchName = document.getElementById('search-name').value.toLowerCase();
+            const searchDepartment = document.getElementById('search-department').value;
+
+            let results = [];
+
+            // ค้นหาจากข้อมูล
+            if (searchDepartment) {
+                results = data[searchDepartment].people.filter(person =>
+                    person.name.toLowerCase().includes(searchName)
+                );
+            } else {
+                // ค้นหาทั้งหมด
+                for (const department in data) {
+                    results = results.concat(
+                        data[department].people.filter(person =>
+                            person.name.toLowerCase().includes(searchName)
+                        )
+                    );
+                }
+            }
+
+            // แสดงผลการค้นหา
+            const resultPopup = document.getElementById('result-popup');
+            const resultPopupContent = document.getElementById('result-popup-content');
+            const overlay = document.getElementById('overlay');
+
+            if (results.length > 0) {
+                resultPopupContent.innerHTML = results.map(person => `
+                    <div class="person">
+                        <img src="${person.image}" alt="${person.name}">
+                        <div class="details">
+                            <strong>${person.name}</strong>
+                            <div class="phone">
+                                📞 <a href="tel:${person.phone}">${person.phone}</a>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                resultPopupContent.innerHTML = "<p>ไม่พบผลลัพธ์</p>";
+            }
+
+            resultPopup.style.display = 'block';
+            overlay.style.display = 'block';
+        }
+
+        // ฟังก์ชันปิด Popup ผลการค้นหา
+        function closeResultPopup() {
+            const resultPopup = document.getElementById('result-popup');
+            const overlay = document.getElementById('overlay');
+
+            resultPopup.style.display = 'none';
+            overlay.style.display = 'none';
+        }
+
+        // ฟังก์ชันเปิด Popup เมนู
+        function openPopup(menu) {
+            const menuPopup = document.getElementById('menu-popup');
+            const menuPopupTitle = document.getElementById('menu-popup-title');
+            const menuPopupContent = document.getElementById('menu-popup-content');
+            const overlay = document.getElementById('overlay');
+
+            // ตั้งค่าข้อมูลใน Popup
+            menuPopupTitle.textContent = data[menu].title;
+            menuPopupContent.innerHTML = data[menu].people.map(person => `
                 <div class="person">
                     <img src="${person.image}" alt="${person.name}">
                     <div class="details">
@@ -330,52 +413,19 @@
                     </div>
                 </div>
             `).join('');
-        }
 
-        // ฟังก์ชันปิด Popup
-        function closePopup() {
-            const popup = document.getElementById('popup');
-            const overlay = document.getElementById('overlay');
-
-            popup.style.display = 'none';
-            overlay.style.display = 'none';
-        }
-
-        // ฟังก์ชันเปิด Popup ผลการค้นหา
-        function openSearchPopup(result) {
-            const searchPopup = document.getElementById('search-popup');
-            const searchPopupContent = document.getElementById('search-popup-content');
-            const overlay = document.getElementById('overlay');
-
-            searchPopupContent.innerHTML = result;
-            searchPopup.style.display = 'block';
+            // แสดง Popup
+            menuPopup.style.display = 'block';
             overlay.style.display = 'block';
         }
 
-        // ฟังก์ชันปิด Popup ผลการค้นหา
-        function closeSearchPopup() {
-            const searchPopup = document.getElementById('search-popup');
+        // ฟังก์ชันปิด Popup เมนู
+        function closeMenuPopup() {
+            const menuPopup = document.getElementById('menu-popup');
             const overlay = document.getElementById('overlay');
 
-            searchPopup.style.display = 'none';
+            menuPopup.style.display = 'none';
             overlay.style.display = 'none';
-        }
-
-        // ฟังก์ชันสลับแสดง/ซ่อนช่องค้นหา
-        function toggleSearchBox() {
-            const searchBox = document.getElementById('searchBox');
-            if (searchBox.style.display === 'none' || searchBox.style.display === '') {
-                searchBox.style.display = 'block';
-            } else {
-                searchBox.style.display = 'none';
-            }
-        }
-
-        // ฟังก์ชันค้นหา
-        function handleSearch() {
-            const searchInput = document.getElementById('search-input').value;
-            const result = `ผลการค้นหา: ${searchInput}`;
-            openSearchPopup(result); // เปิด Popup เพื่อแสดงผลการค้นหา
         }
     </script>
 
