@@ -67,7 +67,7 @@
             bottom: 0;
         }
         .school-background {
-            background-image: url('https://mpics.mgronline.com/pics/Images/566000003954602.JPEG'); /* เปลี่ยนเป็น URL ของรูปโรงเรียนของคุณ */
+            background-image: url('https://mpics.mgronline.com/pics/Images/566000003954602.JPEG'); /* เปลี่ยน URL เป็นรูปภาพใหม่ */
             background-size: cover;
             background-position: center;
             height: 300px;
@@ -81,7 +81,7 @@
             padding: 10px 20px;
             border: none;
             cursor: pointer;
-            margin-bottom: 20px;
+            margin-left: 20px; /* เพิ่มระยะห่างจากเมนูอื่น */
         }
         .search-button:hover {
             background-color: #7B68EE;
@@ -156,6 +156,13 @@
             display: inline; /* แสดงเบอร์โทรศัพท์ทันที */
             margin-left: 10px;
         }
+        .person .phone a {
+            color: #4B0082; /* สีม่วงเข้ม */
+            text-decoration: none;
+        }
+        .person .phone a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -182,6 +189,8 @@
         <a onclick="openPopup('secondary')">
             🎓 มัธยม
         </a>
+        <!-- ย้ายปุ่มค้นหาไปไว้ใน navbar -->
+        <button class="search-button" onclick="toggleSearchBox()">ค้นหา</button>
     </nav>
 
     <div class="school-background">
@@ -189,7 +198,6 @@
     </div>
 
     <div class="container">
-        <button class="search-button" onclick="toggleSearchBox()">ค้นหา</button>
         <div class="search-box" id="searchBox">
             <input type="text" id="search-input" placeholder="ค้นหาครูหรือบุคลากร">
             <button class="search-button" onclick="handleSearch()">ค้นหา</button>
@@ -197,7 +205,7 @@
     </div>
 
     <footer>
-        <p>&copy; 2023 ติดต่อใครเอ่ย. สงวนลิขสิทธิ์.</p>
+        <p>&copy; 2025 ติดต่อใครเอ่ย. สงวนลิขสิทธิ์.</p>
     </footer>
 
     <!-- Popup -->
@@ -317,7 +325,7 @@
                     <div class="details">
                         <strong>${person.name}</strong>
                         <div class="phone">
-                            📞 <span>${person.phone}</span>
+                            📞 <a href="tel:${person.phone}">${person.phone}</a>
                         </div>
                     </div>
                 </div>
