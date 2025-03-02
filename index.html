@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ติดต่อใครเอ่ย</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #E6E6FA; /* สีม่วงพลาสเทว */
+            color: #4B0082; /* สีม่วงเข้ม */
+        }
+        header {
+            background-color: #4B0082;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+        .green-yellow-text {
+            background: linear-gradient(90deg, #32CD32, #ADFF2F, #FFFF00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 36px;
+            font-weight: bold;
+        }
+        nav {
+            background-color: #9370DB; /* สีม่วงกลาง */
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        nav a i {
+            margin-right: 5px;
+        }
+        nav a:hover {
+            color: #E6E6FA; /* สีม่วงอ่อน */
+        }
+        .tel-icon {
+            color: white;
+            font-size: 20px;
+            margin-left: 10px;
+        }
+        .container {
+            padding: 20px;
+            text-align: center;
+        }
+        footer {
+            background-color: #4B0082;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+        .school-background {
+            background-image: url('school.jpg'); /* เปลี่ยนเป็น URL ของรูปโรงเรียนของคุณ */
+            background-size: cover;
+            background-position: center;
+            height: 300px;
+            color: white;
+            text-align: center;
+            padding-top: 100px;
+        }
+        .search-button {
+            background-color: #9370DB;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .search-button:hover {
+            background-color: #7B68EE;
+        }
+        .search-box {
+            margin-top: 20px;
+            display: none; /* ซ่อนช่องค้นหาเริ่มต้น */
+        }
+        .search-box input {
+            padding: 10px;
+            width: 80%;
+            margin-bottom: 10px;
+        }
+        /* Popup Styles */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            width: 400px;
+            text-align: center;
+            border-radius: 10px;
+        }
+        .popup h3 {
+            margin-top: 0;
+        }
+        .popup button {
+            background-color: #9370DB;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .popup button:hover {
+            background-color: #7B68EE;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        .contact-info {
+            text-align: left;
+            margin-top: 10px;
+        }
+        .person {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .person img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .person .details {
+            flex: 1;
+        }
+        .person .phone {
+            display: inline; /* แสดงเบอร์โทรศัพท์ทันที */
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1 class="green-yellow-text">ติดต่อใครเอ่ย</h1>
+        <!-- เปลี่ยนไอคอนโทรศัพท์ -->
+        <p>เบอร์โทร: <a href="tel:021234567" class="tel-icon">📞 02-123-4567</a></p>
+    </header>
+
+    <nav>
+        <a onclick="openPopup('admin')">
+            👨‍💼 ฝ่ายบริหาร
+        </a>
+        <a onclick="openPopup('staff')">
+            👩‍💻 บุคลากร
+        </a>
+        <a onclick="openPopup('kindergarten')">
+            👶 อนุบาล
+        </a>
+        <a onclick="openPopup('primary')">
+            🎒 ประถม
+        </a>
+        <a onclick="openPopup('secondary')">
+            🎓 มัธยม
+        </a>
+    </nav>
+
+    <div class="school-background">
+        <h2>ยินดีต้อนรับสู่ระบบติดต่อใครเอ่ย</h2>
+    </div>
+
+    <div class="container">
+        <button class="search-button" onclick="toggleSearchBox()">ค้นหา</button>
+        <div class="search-box" id="searchBox">
+            <input type="text" id="search-input" placeholder="ค้นหาครูหรือบุคลากร">
+            <button class="search-button" onclick="handleSearch()">ค้นหา</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2023 ติดต่อใครเอ่ย. สงวนลิขสิทธิ์.</p>
+    </footer>
+
+    <!-- Popup -->
+    <div class="overlay" id="overlay"></div>
+    <div class="popup" id="popup">
+        <h3 id="popup-title">ฝ่ายบริหาร</h3>
+        <div id="popup-content"></div>
+        <button onclick="closePopup()">ปิด</button>
+    </div>
+
+    <!-- Popup สำหรับแสดงผลการค้นหา -->
+    <div class="popup" id="search-popup">
+        <h3 id="search-popup-title">ผลการค้นหา</h3>
+        <p id="search-popup-content"></p>
+        <button onclick="closeSearchPopup()">ปิด</button>
+    </div>
+
+    <script>
+        // ข้อมูลทั้งหมด
+        const data = {
+            admin: {
+                title: "ฝ่ายบริหาร",
+                people: [
+                    {
+                        name: "ผู้อำนวยการ",
+                        image: "https://png.pngtree.com/png-clipart/20210425/original/pngtree-shirt-mens-half-length-cartoon-character-avatar-png-image_6254083.png",
+                        phone: "02-123-4567"
+                    },
+                    {
+                        name: "รองผู้อำนวยการ",
+                        image: "https://png.pngtree.com/png-clipart/20210425/original/pngtree-shirt-mens-half-length-cartoon-character-avatar-png-image_6254083.png",
+                        phone: "02-123-4568"
+                    }
+                ]
+            },
+            staff: {
+                title: "บุคลากร",
+                people: [
+                    {
+                        name: "เจ้าหน้าที่ธุรการ",
+                        image: "https://png.pngtree.com/png-clipart/20210425/original/pngtree-shirt-mens-half-length-cartoon-character-avatar-png-image_6254083.png",
+                        phone: "02-123-4569"
+                    },
+                    {
+                        name: "เจ้าหน้าที่ IT",
+                        image: "https://png.pngtree.com/png-clipart/20210425/original/pngtree-shirt-mens-half-length-cartoon-character-avatar-png-image_6254083.png",
+                        phone: "02-123-4570"
+                    }
+                ]
+            },
+            kindergarten: {
+                title: "อนุบาล",
+                people: [
+                    {
+                        name: "ครูสมศรี",
+                        image: "https://png.pngtree.com/png-clipart/20210425/original/pngtree-shirt-mens-half-length-cartoon-character-avatar-png-image_6254083.png",
+                        phone: "02-123-4571"
+                    },
+                    {
+                        name: "ครูสมชาย",
+                        image: "https://png.pngtree.com/png-clipart/20210425/original/pngtree-shirt-mens-half-length-cartoon-character-avatar-png-image_6254083.png",
+                        phone: "02-123-4572"
+                    }
+                ]
+            },
+            primary: {
+                title: "ประถม",
+                people: [
+                    {
+                        name: "ครูสมหมาย",
+                        image: "https://png.pngtree.com/png-clipart/20210425/original/pngtree-shirt-mens-half-length-cartoon-character-avatar-png-image_6254083.png",
+                        phone: "02-123-4573"
+                    },
+                    {
+                        name: "ครูสมาน",
+                        image: "https://png.pngtree.com/png-clipart/20210425/original/pngtree-shirt-mens-half-length-cartoon-character-avatar-png-image_6254083.png",
+                        phone: "02-123-4574"
+                    }
+                ]
+            },
+            secondary: {
+                title: "มัธยม",
+                people: [
+                    {
+                        name: "ครูสมปอง",
+                        image: "https://png.pngtree.com/png-clipart/20210425/original/pngtree-shirt-mens-half-length-cartoon-character-avatar-png-image_6254083.png",
+                        phone: "02-123-4575"
+                    },
+                    {
+                        name: "ครูสมใจ",
+                        image: "https://png.pngtree.com/png-clipart/20210425/original/pngtree-shirt-mens-half-length-cartoon-character-avatar-png-image_6254083.png",
+                        phone: "02-123-4576"
+                    }
+                ]
+            }
+        };
+
+        // ฟังก์ชันเปิด Popup
+        function openPopup(type) {
+            const popup = document.getElementById('popup');
+            const overlay = document.getElementById('overlay');
+            const title = document.getElementById('popup-title');
+            const content = document.getElementById('popup-content');
+
+            title.innerHTML = data[type].title;
+            content.innerHTML = generatePeopleList(data[type].people);
+
+            popup.style.display = 'block';
+            overlay.style.display = 'block';
+        }
+
+        // ฟังก์ชันสร้างรายชื่อบุคคล
+        function generatePeopleList(people) {
+            return people.map(person => `
+                <div class="person">
+                    <img src="${person.image}" alt="${person.name}">
+                    <div class="details">
+                        <strong>${person.name}</strong>
+                        <div class="phone">
+                            📞 <span>${person.phone}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ฟังก์ชันปิด Popup
+        function closePopup() {
+            const popup = document.getElementById('popup');
+            const overlay = document.getElementById('overlay');
+
+            popup.style.display = 'none';
+            overlay.style.display = 'none';
+        }
+
+        // ฟังก์ชันเปิด Popup ผลการค้นหา
+        function openSearchPopup(result) {
+            const searchPopup = document.getElementById('search-popup');
+            const searchPopupContent = document.getElementById('search-popup-content');
+            const overlay = document.getElementById('overlay');
+
+            searchPopupContent.innerHTML = result;
+            searchPopup.style.display = 'block';
+            overlay.style.display = 'block';
+        }
+
+        // ฟังก์ชันปิด Popup ผลการค้นหา
+        function closeSearchPopup() {
+            const searchPopup = document.getElementById('search-popup');
+            const overlay = document.getElementById('overlay');
+
+            searchPopup.style.display = 'none';
+            overlay.style.display = 'none';
+        }
+
+        // ฟังก์ชันสลับแสดง/ซ่อนช่องค้นหา
+        function toggleSearchBox() {
+            const searchBox = document.getElementById('searchBox');
+            if (searchBox.style.display === 'none' || searchBox.style.display === '') {
+                searchBox.style.display = 'block';
+            } else {
+                searchBox.style.display = 'none';
+            }
+        }
+
+        // ฟังก์ชันค้นหา
+        function handleSearch() {
+            const searchInput = document.getElementById('search-input').value;
+            const result = `ผลการค้นหา: ${searchInput}`;
+            openSearchPopup(result); // เปิด Popup เพื่อแสดงผลการค้นหา
+        }
+    </script>
+
+</body>
+</html>
